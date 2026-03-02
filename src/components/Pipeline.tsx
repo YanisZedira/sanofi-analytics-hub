@@ -3,24 +3,34 @@ import { FlaskConical, Calendar, Target, AlertCircle, CheckCircle2, Clock, Filte
 import { mockData } from '../data';
 import { motion } from 'motion/react';
 
-export default function Pipeline() {
+import { translations, type Language } from '../translations';
+
+export default function Pipeline({ language = 'en' }: { language?: Language }) {
   const [filterArea, setFilterArea] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
+  const t = translations[language];
 
-  const therapeuticAreas = ['All', ...new Set(mockData.pipeline.map(p => p.therapeuticArea))];
-  const statuses = ['All', 'On Track', 'Accelerated', 'Delayed'];
+  const therapeuticAreas = [t.allAreas, ...new Set(mockData.pipeline.map(p => p.therapeuticArea))];
+  const statuses = [t.allStatuses, t.onTrack, t.accelerated, t.delayed];
 
   const filteredPipeline = mockData.pipeline.filter(p => {
-    return (filterArea === 'All' || p.therapeuticArea === filterArea) &&
-           (filterStatus === 'All' || p.status === filterStatus);
+    const statusMap: Record<string, string> = {
+      'On Track': t.onTrack,
+      'Accelerated': t.accelerated,
+      'Delayed': t.delayed
+    };
+    const translatedStatus = statusMap[p.status] || p.status;
+
+    return (filterArea === t.allAreas || p.therapeuticArea === filterArea) &&
+           (filterStatus === t.allStatuses || translatedStatus === filterStatus);
   });
 
   return (
     <div className="space-y-8">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">R&D Pipeline</h1>
-          <p className="text-slate-500 mt-1">Tracking {filteredPipeline.length} clinical programs matching your criteria.</p>
+          <h1 className="text-3xl font-bold text-slate-900">{t.pipeline}</h1>
+          <p className="text-slate-500 mt-1">{t.trackingPrograms.replace('{count}', filteredPipeline.length.toString())}</p>
         </div>
         <div className="flex flex-wrap gap-3">
           <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3 py-2">
@@ -68,7 +78,9 @@ export default function Pipeline() {
                   {project.status === 'Accelerated' && <CheckCircle2 size={10} />}
                   {project.status === 'Delayed' && <AlertCircle size={10} />}
                   {project.status === 'On Track' && <Clock size={10} />}
-                  {project.status}
+                  {project.status === 'Accelerated' ? t.accelerated : 
+                   project.status === 'Delayed' ? t.delayed : 
+                   project.status === 'On Track' ? t.onTrack : project.status}
                 </span>
               </div>
               <h3 className="text-xl font-bold text-slate-900 group-hover:text-sanofi-purple transition-colors">{project.name}</h3>
@@ -79,14 +91,14 @@ export default function Pipeline() {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Calendar size={16} />
-                  <span>Est. Launch: {project.estimatedLaunch}</span>
+                  <span>{t.estLaunch}: {project.estimatedLaunch}</span>
                 </div>
               </div>
             </div>
 
             <div className="w-full md:w-64 space-y-2">
               <div className="flex justify-between text-xs font-bold text-slate-500 uppercase">
-                <span>Probability of Success</span>
+                <span>{t.probabilityOfSuccess}</span>
                 <span>{project.probabilityOfSuccess}%</span>
               </div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">

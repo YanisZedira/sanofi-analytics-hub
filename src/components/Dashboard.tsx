@@ -17,8 +17,11 @@ import { motion } from 'motion/react';
 
 const COLORS = ['#7A00E6', '#9D4DFF', '#C199FF', '#E5E5E5'];
 
-export default function Dashboard() {
+import { translations, type Language } from '../translations';
+
+export default function Dashboard({ language = 'en' }: { language?: Language }) {
   const [timePeriod, setTimePeriod] = useState('6m');
+  const t = translations[language];
 
   const getFilteredSales = () => {
     if (timePeriod === '3m') return mockData.sales.slice(-3);
@@ -28,8 +31,8 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-3xl font-bold text-slate-900">Executive Overview</h1>
-        <p className="text-slate-500 mt-1">Real-time performance metrics across all therapeutic areas.</p>
+        <h1 className="text-3xl font-bold text-slate-900">{t.dashboard}</h1>
+        <p className="text-slate-500 mt-1">{t.realTimeMetrics}</p>
       </header>
 
       {/* Stats Grid */}
@@ -57,7 +60,11 @@ export default function Dashboard() {
                 {metric.change}%
               </div>
             </div>
-            <h3 className="text-slate-500 text-sm font-medium">{metric.label}</h3>
+            <h3 className="text-slate-500 text-sm font-medium">
+              {metric.label === 'Revenue' ? t.revenue : 
+               metric.label === 'R&D Spend' ? 'R&D Spend' : // Maybe add translation for this too if needed
+               metric.label}
+            </h3>
             <p className="text-2xl font-bold text-slate-900 mt-1">{metric.value}</p>
           </motion.div>
         ))}
@@ -71,14 +78,14 @@ export default function Dashboard() {
           className="glass-card p-8"
         >
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-lg font-bold">Revenue by Segment</h3>
+            <h3 className="text-lg font-bold">{t.revenueBySegment}</h3>
             <select 
               value={timePeriod}
               onChange={(e) => setTimePeriod(e.target.value)}
               className="bg-slate-50 border-none text-sm rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-sanofi-purple/20 outline-none cursor-pointer"
             >
-              <option value="6m">Last 6 Months</option>
-              <option value="3m">Last Quarter</option>
+              <option value="6m">{t.last6Months}</option>
+              <option value="3m">{t.lastQuarter}</option>
             </select>
           </div>
           <div className="h-[300px]">
@@ -104,13 +111,13 @@ export default function Dashboard() {
           </div>
           <div className="flex gap-6 mt-6 justify-center">
             <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-              <div className="w-3 h-3 rounded-full bg-sanofi-purple" /> Specialty Care
+              <div className="w-3 h-3 rounded-full bg-sanofi-purple" /> {t.specialtyCare}
             </div>
             <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-              <div className="w-3 h-3 rounded-full bg-[#9D4DFF]" /> Vaccines
+              <div className="w-3 h-3 rounded-full bg-[#9D4DFF]" /> {t.vaccines}
             </div>
             <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-              <div className="w-3 h-3 rounded-full bg-[#C199FF]" /> Gen Med
+              <div className="w-3 h-3 rounded-full bg-[#C199FF]" /> {t.generalMed}
             </div>
           </div>
         </motion.div>
@@ -122,7 +129,7 @@ export default function Dashboard() {
           transition={{ delay: 0.2 }}
           className="glass-card p-8"
         >
-          <h3 className="text-lg font-bold mb-8">Regional Growth</h3>
+          <h3 className="text-lg font-bold mb-8">{t.regionalGrowth}</h3>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={mockData.regional} layout="vertical">

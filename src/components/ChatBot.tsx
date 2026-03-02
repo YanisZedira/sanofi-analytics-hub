@@ -4,7 +4,9 @@ import { getChatResponse } from '../services/aiService';
 import Markdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
 
-export default function ChatBot() {
+import { translations, type Language } from '../translations';
+
+export default function ChatBot({ language = 'en' }: { language?: Language }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [input, setInput] = useState('');
@@ -12,16 +14,19 @@ export default function ChatBot() {
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const t = translations[language];
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isLoading]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSend = async (text?: string) => {
+    const messageToSend = text || input;
+    if (!messageToSend.trim() || isLoading) return;
 
-    const userMessage = input;
+    const userMessage = messageToSend;
     setInput('');
     setMessages(prev => [...prev, { role: 'user', parts: [{ text: userMessage }] }]);
     setIsLoading(true);
@@ -32,13 +37,7 @@ export default function ChatBot() {
     setIsLoading(false);
   };
 
-  const suggestedQuestions = [
-    "Analyze the impact of Dupixent on Specialty Care revenue.",
-    "Propose a strategic expansion plan for the APAC region.",
-    "Evaluate the R&D pipeline risk based on current probability of success.",
-    "How does Sanofi's mission drive our current vaccine strategy?",
-    "Identify underperforming regions and suggest corrective actions."
-  ];
+  const suggestedQuestions = t.suggestedQuestions;
 
   return (
     <>
@@ -76,10 +75,10 @@ export default function ChatBot() {
                   <Bot size={22} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm tracking-tight">Strategic AI Assistant</h3>
+                  <h3 className="font-bold text-sm tracking-tight">{t.aiAssistant}</h3>
                   <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-                    <span className="text-[10px] font-bold opacity-80 uppercase tracking-widest">Live Analysis</span>
+                    <span className="text-[10px] font-bold opacity-80 uppercase tracking-widest">{t.liveAnalysis}</span>
                   </div>
                 </div>
               </div>
@@ -103,22 +102,19 @@ export default function ChatBot() {
                         <div className="w-20 h-20 bg-sanofi-purple/10 text-sanofi-purple rounded-3xl flex items-center justify-center mx-auto mb-6">
                           <Sparkles size={40} />
                         </div>
-                        <h4 className="font-bold text-xl text-slate-900 tracking-tight">Strategic Intelligence</h4>
+                        <h4 className="font-bold text-xl text-slate-900 tracking-tight">{t.strategicIntelligence}</h4>
                         <p className="text-sm text-slate-500 mt-2 px-8 leading-relaxed">
-                          I am trained on Sanofi's global datasets to provide real-time strategic insights and decision support.
+                          {t.aiTraining}
                         </p>
                       </div>
                       
                       <div className="space-y-3">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Suggested Analysis</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">{t.suggestedAnalysis}</p>
                         <div className="grid grid-cols-1 gap-2">
                           {suggestedQuestions.map((q, i) => (
                             <button 
                               key={i}
-                              onClick={() => {
-                                setInput(q);
-                                handleSend();
-                              }}
+                              onClick={() => handleSend(q)}
                               className="text-left p-3 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-600 hover:border-sanofi-purple hover:text-sanofi-purple transition-all"
                             >
                               {q}
@@ -158,7 +154,7 @@ export default function ChatBot() {
                         <div className="w-1.5 h-1.5 bg-sanofi-purple rounded-full animate-bounce" />
                         <div className="w-1.5 h-1.5 bg-sanofi-purple rounded-full animate-bounce [animation-delay:0.2s]" />
                         <div className="w-1.5 h-1.5 bg-sanofi-purple rounded-full animate-bounce [animation-delay:0.4s]" />
-                        <span className="text-[10px] font-bold text-sanofi-purple ml-2 uppercase tracking-widest">Thinking</span>
+                        <span className="text-[10px] font-bold text-sanofi-purple ml-2 uppercase tracking-widest">{t.thinking}</span>
                       </div>
                     </div>
                   )}
@@ -172,11 +168,11 @@ export default function ChatBot() {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                      placeholder="Ask for strategic advice..."
+                      placeholder={t.chatPlaceholder}
                       className="w-full pl-4 pr-12 py-4 bg-slate-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-sanofi-purple/20 outline-none transition-all"
                     />
                     <button 
-                      onClick={handleSend}
+                      onClick={() => handleSend()}
                       disabled={!input.trim() || isLoading}
                       className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-sanofi-purple text-white rounded-xl hover:bg-sanofi-purple/90 disabled:opacity-50 transition-all shadow-lg shadow-sanofi-purple/20"
                     >
@@ -184,7 +180,7 @@ export default function ChatBot() {
                     </button>
                   </div>
                   <p className="text-[10px] text-center text-slate-400 mt-3 font-medium">
-                    AI-powered insights for Sanofi Strategic Hub.
+                    {t.aiPowered}
                   </p>
                 </div>
               </>

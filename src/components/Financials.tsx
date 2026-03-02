@@ -23,12 +23,16 @@ const data = [
 
 const COLORS = ['#7A00E6', '#9D4DFF', '#C199FF', '#E2E8F0'];
 
-export default function Financials() {
+import { translations, type Language } from '../translations';
+
+export default function Financials({ language = 'en' }: { language?: Language }) {
+  const t = translations[language];
+
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-3xl font-bold text-slate-900">Financial Performance</h1>
-        <p className="text-slate-500 mt-1">Detailed breakdown of revenue streams and capital allocation.</p>
+        <h1 className="text-3xl font-bold text-slate-900">{t.financials}</h1>
+        <p className="text-slate-500 mt-1">{t.financialBreakdown}</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -37,7 +41,7 @@ export default function Financials() {
           animate={{ opacity: 1, y: 0 }}
           className="lg:col-span-2 glass-card p-8"
         >
-          <h3 className="text-lg font-bold mb-8">Quarterly Revenue Growth</h3>
+          <h3 className="text-lg font-bold mb-8">{t.quarterlyRevenue}</h3>
           <div className="h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={[
@@ -66,12 +70,18 @@ export default function Financials() {
           transition={{ delay: 0.2 }}
           className="glass-card p-8"
         >
-          <h3 className="text-lg font-bold mb-8">Revenue Mix</h3>
+          <h3 className="text-lg font-bold mb-8">{t.revenueMix}</h3>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={data}
+                  data={data.map(item => ({
+                    ...item,
+                    name: item.name === 'Specialty Care' ? t.specialtyCare :
+                          item.name === 'Vaccines' ? t.vaccines :
+                          item.name === 'General Med' ? t.generalMed :
+                          item.name === 'Consumer Health' ? t.consumerHealth : item.name
+                  }))}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -92,7 +102,12 @@ export default function Financials() {
               <div key={item.name} className="flex justify-between items-center text-sm">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx] }} />
-                  <span className="text-slate-500">{item.name}</span>
+                  <span className="text-slate-500">
+                    {item.name === 'Specialty Care' ? t.specialtyCare :
+                     item.name === 'Vaccines' ? t.vaccines :
+                     item.name === 'General Med' ? t.generalMed :
+                     item.name === 'Consumer Health' ? t.consumerHealth : item.name}
+                  </span>
                 </div>
                 <span className="font-bold">{item.value}%</span>
               </div>
@@ -103,9 +118,9 @@ export default function Financials() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { label: 'EBITDA Margin', value: '32.4%', icon: TrendingUp, color: 'text-emerald-600' },
-          { label: 'Free Cash Flow', value: '€2.4B', icon: Wallet, color: 'text-blue-600' },
-          { label: 'Dividend Yield', value: '4.1%', icon: CreditCard, color: 'text-sanofi-purple' },
+          { label: t.ebitdaMargin, value: '32.4%', icon: TrendingUp, color: 'text-emerald-600' },
+          { label: t.freeCashFlow, value: '€2.4B', icon: Wallet, color: 'text-blue-600' },
+          { label: t.dividendYield, value: '4.1%', icon: CreditCard, color: 'text-sanofi-purple' },
         ].map((item, idx) => (
           <motion.div
             key={item.label}
