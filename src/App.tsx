@@ -505,7 +505,7 @@ export default function App() {
               </div>
               <div className="w-12 h-12 bg-sanofi-purple rounded-2xl flex items-center justify-center text-white shadow-lg shadow-sanofi-purple/20 overflow-hidden border-2 border-white">
                 <img 
-                  src="https://raw.githubusercontent.com/yaniszedira/yaniszedira.github.io/main/assets/img/profile.jpg" 
+                  src="https://yaniszedira.github.io/assets/profile.jpg" 
                   alt="Yanis Zedira" 
                   className="w-full h-full object-cover"
                   onError={(e) => {
