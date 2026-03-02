@@ -70,6 +70,11 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           <span className="font-medium">Logout</span>
         </button>
       </div>
+      <div className="mt-auto pt-6 border-t border-slate-200">
+  <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-semibold mb-1">Developed by</p>
+  <p className="text-sm font-bold text-slate-900 tracking-tight">YANIS ZEDIRA</p>
+</div>
+      
     </aside>
   );
 }
